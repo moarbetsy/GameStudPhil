@@ -489,7 +489,7 @@
           class="space-y-4"
         >
           <input type="hidden" name="_subject" value="Beta signup – Blue Melly Games" />
-          <input type="hidden" name="_next" id="beta-form-next" value="" />
+          <input type="hidden" name="_next" id="beta-form-next" value="https://moarbetsy.github.io/GameStudPhil/#beta-thanks" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="text" name="_honey" class="beta-honeypot" tabindex="-1" autocomplete="off" />
           <div>
@@ -815,7 +815,7 @@
       var betaThanksToast = document.getElementById("beta-thanks-toast");
 
       if (betaFormNext) {
-        betaFormNext.value = window.location.origin + window.location.pathname + (window.location.search || "") + "#beta-thanks";
+        betaFormNext.value = (window.location.href.split('#')[0]) + '#beta-thanks';
       }
 
       function openBetaModal() {
