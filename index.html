@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <!-- ===== Encoding & Viewport ===== -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ===== Document Title & SEO ===== -->
+    <title>BLUE MELLY GAMES | Game Studio</title>
+
+    <!-- ===== External Resources ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+    <!-- ===== Styles ===== -->
+    <style>
+      /* ==========================================================
+         1. SETTINGS — Core theme & base
+         ========================================================== */
+      html {
+        height: 100%;
+        background-color: #000000;
+        overscroll-behavior: none;
+      }
+
+      body {
+        width: 100%;
+        min-height: 100%;
+        font-family: "Inter", sans-serif;
+        color: #ffffff;
+        background-color: #000000;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ==========================================================
+         2. GENERIC — Scrollbar customisation
+         ========================================================== */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0a0a0a;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 3px;
+      }
+
+      /* ==========================================================
+         3. LAYOUT — Navigation
+         ========================================================== */
+      .glass-nav {
+        background: rgba(0, 0, 0, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      /* ==========================================================
+         4. COMPONENTS — Mobile menu animation
+         ========================================================== */
+      .mobile-link-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease-out;
+      }
+
+      .menu-open .mobile-link-item:nth-child(1) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.1s;
+      }
+
+      .menu-open .mobile-link-item:nth-child(2) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.2s;
+      }
+
+      .menu-open .mobile-link-item:nth-child(3) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.3s;
+      }
+
+      .menu-open .mobile-link-item:nth-child(4) {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.4s;
+      }
+
+      /* ==========================================================
+         5. COMPONENTS — Accordion
+         ========================================================== */
+      .flex-accordion {
+        transition: flex 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      /* ==========================================================
+         6. COMPONENTS — Video background
+         ========================================================== */
+      .video-background-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+      }
+
+      .video-iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100vw;
+        height: 100vh;
+        min-width: 177.77vh;
+        min-height: 56.25vw;
+        border: none;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        animation: videoFadeIn 1s ease-in-out 2s forwards;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background: black;
+      }
+
+      .opacity-60 {
+        opacity: 0.6;
+      }
+
+      @keyframes videoFadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* ==========================================================
+         7. COMPONENTS — Loader & typing effects
+         ========================================================== */
+      #loader {
+        transition:
+          opacity 0.6s ease-out,
+          visibility 0.6s;
+      }
+
+      .loader-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .scan-line {
+        width: 100%;
+        height: 2px;
+        background: #818cf8;
+        box-shadow: 0 0 10px #4f46e5;
+        animation: scan 2s linear infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .typing-cursor::after {
+        content: "";
+        display: inline-block;
+        width: 0.25em;
+        height: 0.85em;
+        margin-bottom: -0.05em;
+        margin-left: 0.15em;
+        background-color: #22d3ee;
+        animation: blink 1s step-end infinite;
+      }
+
+      .cursor-vanish::after {
+        opacity: 0 !important;
+        animation: none !important;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="antialiased selection:bg-cyan-900/60 selection:text-cyan-100">
+    <!-- ===== Loading Screen ===== -->
+    <div
+      id="loader"
+      class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
+    >
+      <div class="relative mb-8 px-4 text-center">
+        <h1
+          class="text-3xl font-bold uppercase tracking-tighter text-white md:text-4xl"
+        >
+          BLUE MELLY GAMES
+        </h1>
+        <p class="mt-2 font-mono text-xs tracking-widest text-indigo-400">
+          GAME STUDIO // MONTREAL
+        </p>
+      </div>
+      <div class="relative h-0.5 w-48 overflow-hidden bg-neutral-900">
+        <div class="scan-line absolute left-0 top-0"></div>
+      </div>
+    </div>
+
+    <!-- ===== Navigation ===== -->
+    <nav class="glass-nav fixed left-0 right-0 top-0 z-50 h-16">
+      <div
+        class="mx-auto flex h-full max-w-7xl items-center justify-between px-6"
+      >
+        <!-- Logo -->
+        <a href="#" class="group relative z-50 flex items-center gap-2">
+          <span
+            class="h-2 w-2 rotate-45 rounded-sm border border-cyan-400/50 bg-cyan-600 group-hover:animate-spin"
+          ></span>
+          <span
+            class="text-sm font-semibold uppercase tracking-tight text-white transition-colors group-hover:text-cyan-400"
+            >Blue Melly Games</span
+          >
+        </a>
+
+        <!-- Desktop Menu -->
+        <div
+          class="hidden items-center space-x-8 text-[11px] font-medium uppercase tracking-widest text-neutral-400 md:flex"
+        >
+          <a href="#nexus" class="transition-colors hover:text-white">Home</a>
+          <a href="#about" class="transition-colors hover:text-white">About</a>
+          <a href="#transmission" class="transition-colors hover:text-white"
+            >Contact</a
+          >
+        </div>
+
+        <!-- CTA (Desktop) -->
+        <a
+          href="#transmission"
+          class="hidden items-center gap-2 rounded-sm bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-tight text-black transition-colors hover:bg-neutral-200 md:flex"
+        >
+          <span>Get in Touch</span>
+          <span class="iconify" data-icon="lucide:arrow-down-right"></span>
+        </a>
+
+        <!-- Mobile Burger -->
+        <button id="mobile-menu-btn" class="relative z-50 p-2 text-white md:hidden">
+          <span
+            id="burger-icon"
+            class="iconify h-6 w-6 transition-transform"
+            data-icon="lucide:menu"
+          ></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ===== Mobile Menu Overlay (outside nav to avoid backdrop-filter containing block) ===== -->
+    <div
+      id="mobile-menu"
+      class="fixed inset-0 z-40 flex flex-col items-center justify-center space-y-8 bg-black/80 opacity-0 pointer-events-none backdrop-blur-xl transition-all duration-300"
+    >
+      <a
+        href="#nexus"
+        class="mobile-link-item text-4xl font-black uppercase tracking-tighter text-white drop-shadow-lg transition-colors hover:text-cyan-400"
+        >Home</a
+      >
+      <a
+        href="#about"
+        class="mobile-link-item text-4xl font-black uppercase tracking-tighter text-white drop-shadow-lg transition-colors hover:text-cyan-400"
+        >About</a
+      >
+      <a
+        href="#transmission"
+        class="mobile-link-item text-4xl font-black uppercase tracking-tighter text-white drop-shadow-lg transition-colors hover:text-cyan-400"
+        >Contact</a
+      >
+    </div>
+
+    <!-- ===== Section 1: Hero ===== -->
+    <header id="nexus" class="relative flex h-screen flex-col overflow-hidden bg-black">
+      <!-- YouTube Video Background -->
+      <div class="video-background-wrapper">
+        <div class="video-overlay opacity-60"></div>
+        <iframe
+          id="youtube-player"
+          class="video-iframe"
+          src="https://www.youtube.com/embed/h7MYJghRWt0?autoplay=1&amp;mute=1&amp;controls=0&amp;loop=1&amp;playlist=h7MYJghRWt0&amp;rel=0&amp;iv_load_policy=3&amp;playsinline=1&amp;enablejsapi=1&amp;start=7"
+          title="Background Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          tabindex="-1"
+        ></iframe>
+      </div>
+
+      <!-- Gradient overlay for text readability -->
+      <div
+        class="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black via-transparent to-black/60"
+      ></div>
+
+      <!-- Hero text -->
+      <div
+        class="relative z-20 flex flex-grow flex-col items-start justify-end px-6 pb-16 md:pb-20"
+      >
+        <div id="typing-wrapper" class="typing-wrapper typing-cursor text-left">
+          <span
+            id="type-part-1"
+            class="mb-1 block text-4xl font-bold uppercase tracking-tighter text-white md:mb-2 md:text-6xl"
+          ></span>
+          <span
+            id="type-part-2"
+            class="block text-4xl font-bold uppercase tracking-tighter text-transparent md:text-6xl"
+            style="-webkit-text-stroke: 1px rgba(6, 182, 212, 0.8)"
+          ></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Section 2: Coming Soon ===== -->
+    <section id="about" class="relative overflow-hidden bg-black py-32">
+      <div class="relative z-20 mx-auto max-w-7xl px-6">
+        <div
+          class="flex flex-col items-center justify-center rounded-xl border border-white/5 bg-neutral-900/30 p-12 backdrop-blur-sm"
+        >
+          <div class="space-y-6 text-center">
+            <h2
+              class="text-4xl font-bold uppercase tracking-tighter text-white md:text-6xl"
+            >
+              Coming Soon
+            </h2>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Section 3: Contact ===== -->
+    <section id="transmission" class="relative bg-black py-24">
+      <div class="mx-auto max-w-7xl px-6">
+        <div
+          class="flex flex-col items-center justify-between gap-12 rounded-lg border border-white/5 bg-[#050505] p-8 md:flex-row md:p-12"
+        >
+          <div class="text-center md:text-left">
+            <h2 class="mb-4 text-3xl font-bold tracking-tight text-white">
+              CONTACT
+            </h2>
+            <div
+              class="flex flex-col space-y-2 font-mono text-sm text-neutral-400"
+            >
+              <a
+                href="mailto:contact@bluemellygames.com"
+                class="flex items-center justify-center gap-2 transition-colors hover:text-cyan-400 md:justify-start"
+              >
+                <span class="iconify" data-icon="lucide:mail"></span>
+                contact@bluemellygames.com
+              </a>
+              <div
+                class="flex items-center justify-center gap-2 md:justify-start"
+              >
+                <span class="iconify" data-icon="lucide:map-pin"></span>
+                Montreal, Canada
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer
+          class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] uppercase tracking-widest text-neutral-600 md:flex-row"
+        >
+          <span>&copy; 2025 Blue Melly Games.</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+      // --- Loader & Typing ---
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          var loader = document.getElementById("loader");
+          loader.classList.add("loader-hidden");
+          setTimeout(function () {
+            loader.style.display = "none";
+            startTypingSequence();
+          }, 600);
+        }, 1000);
+      });
+
+      function startTypingSequence() {
+        var text1 = "BLUE MELLY GAMES.";
+        var text2 = "Montreal";
+        var el1 = document.getElementById("type-part-1");
+        var el2 = document.getElementById("type-part-2");
+        var typingWrapper = document.getElementById("typing-wrapper");
+        var i = 0;
+
+        function typeFirstPart() {
+          if (i < text1.length) {
+            el1.textContent += text1.charAt(i);
+            i++;
+            setTimeout(typeFirstPart, 100);
+          } else {
+            i = 0;
+            setTimeout(typeSecondPart, 300);
+          }
+        }
+
+        function typeSecondPart() {
+          if (i < text2.length) {
+            el2.textContent += text2.charAt(i);
+            i++;
+            setTimeout(typeSecondPart, 100);
+          } else {
+            setTimeout(function () {
+              typingWrapper.classList.add("cursor-vanish");
+            }, 2000);
+          }
+        }
+
+        typeFirstPart();
+      }
+
+      // --- Mobile Menu Logic ---
+      var menuBtn = document.getElementById("mobile-menu-btn");
+      var mobileMenu = document.getElementById("mobile-menu");
+      var burgerIcon = document.getElementById("burger-icon");
+      var mobileLinkItems = document.querySelectorAll(".mobile-link-item");
+      var isMenuOpen = false;
+
+      menuBtn.addEventListener("click", function () {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+          mobileMenu.classList.remove("opacity-0", "pointer-events-none");
+          mobileMenu.classList.add(
+            "opacity-100",
+            "pointer-events-auto",
+            "menu-open"
+          );
+          document.body.style.overflow = "hidden";
+          burgerIcon.setAttribute("data-icon", "lucide:x");
+        } else {
+          mobileMenu.classList.remove(
+            "opacity-100",
+            "pointer-events-auto",
+            "menu-open"
+          );
+          mobileMenu.classList.add("opacity-0", "pointer-events-none");
+          document.body.style.overflow = "";
+          burgerIcon.setAttribute("data-icon", "lucide:menu");
+        }
+      });
+
+      mobileLinkItems.forEach(function (link) {
+        link.addEventListener("click", function () {
+          isMenuOpen = false;
+          mobileMenu.classList.remove(
+            "opacity-100",
+            "pointer-events-auto",
+            "menu-open"
+          );
+          mobileMenu.classList.add("opacity-0", "pointer-events-none");
+          document.body.style.overflow = "";
+          burgerIcon.setAttribute("data-icon", "lucide:menu");
+        });
+      });
+    </script>
+  </body>
+</html>
