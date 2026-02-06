@@ -7,16 +7,35 @@
 
     <!-- ===== Document Title & SEO ===== -->
     <title>BLUE MELLY GAMES | Game Studio</title>
+    <meta
+      name="description"
+      content="Blue Melly Games is an indie game studio based in Montreal, Canada. Stay tuned for our upcoming titles."
+    />
+
+    <!-- ===== Content Security Policy ===== -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://code.iconify.design https://www.youtube.com https://www.google.com https://s.ytimg.com https://*.googlesyndication.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https: ;
+        frame-src https://www.youtube.com https://www.google.com;
+        connect-src 'self' https://api.iconify.design https://cdn.tailwindcss.com https://*.youtube.com https://*.google.com;
+        media-src 'self' https://*.googlevideo.com;"
+    />
 
     <!-- ===== External Resources ===== -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.youtube.com" />
+    <link rel="preconnect" href="https://i.ytimg.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 
     <!-- ===== Styles ===== -->
     <style>
@@ -167,14 +186,11 @@
          7. COMPONENTS — Loader & typing effects
          ========================================================== */
       #loader {
-        transition:
-          opacity 0.6s ease-out,
-          visibility 0.6s;
+        transition: opacity 0.6s ease-out;
       }
 
       .loader-hidden {
         opacity: 0;
-        visibility: hidden;
         pointer-events: none;
       }
 
@@ -209,6 +225,64 @@
       .cursor-vanish::after {
         opacity: 0 !important;
         animation: none !important;
+      }
+
+      /* ==========================================================
+         8. CLS FIX — Reserve space for typing animation
+         ========================================================== */
+      #type-part-1,
+      #type-part-2 {
+        min-height: 2.5rem; /* matches text-4xl line-height */
+      }
+
+      @media (min-width: 768px) {
+        #type-part-1,
+        #type-part-2 {
+          min-height: 3.75rem; /* matches md:text-6xl line-height */
+        }
+      }
+
+      /* ==========================================================
+         9. YOUTUBE FACADE — Click-to-play thumbnail
+         ========================================================== */
+      .video-facade {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        background-color: #000;
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+      }
+
+      .video-facade-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 68px;
+        height: 48px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .video-facade-play::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 0 10px 18px;
+        border-color: transparent transparent transparent #fff;
+        margin-left: 4px;
       }
 
       @keyframes blink {
@@ -262,7 +336,7 @@
 
         <!-- Desktop Menu -->
         <div
-          class="hidden items-center space-x-8 text-[11px] font-medium uppercase tracking-widest text-neutral-400 md:flex"
+          class="hidden items-center space-x-8 text-[11px] font-medium uppercase tracking-widest text-neutral-300 md:flex"
         >
           <a href="#nexus" class="transition-colors hover:text-white">Home</a>
           <a href="#about" class="transition-colors hover:text-white">About</a>
@@ -282,7 +356,7 @@
         </a>
 
         <!-- Mobile Burger -->
-        <button id="mobile-menu-btn" class="relative z-50 p-2 text-white md:hidden">
+        <button id="mobile-menu-btn" aria-label="Toggle menu" class="relative z-50 p-2 text-white md:hidden">
           <span
             id="burger-icon"
             class="iconify h-6 w-6 transition-transform"
@@ -321,18 +395,19 @@
 
     <!-- ===== Section 1: Hero ===== -->
     <header id="nexus" class="relative flex h-screen flex-col overflow-hidden bg-black">
-      <!-- YouTube Video Background -->
+      <!-- YouTube Video Background (Facade: loads on interaction to save ~10 MB) -->
       <div class="video-background-wrapper">
         <div class="video-overlay opacity-60"></div>
-        <iframe
-          id="youtube-player"
-          class="video-iframe"
-          src="https://www.youtube.com/embed/h7MYJghRWt0?autoplay=1&amp;mute=1&amp;controls=0&amp;loop=1&amp;playlist=h7MYJghRWt0&amp;rel=0&amp;iv_load_policy=3&amp;playsinline=1&amp;enablejsapi=1&amp;start=9"
-          title="Background Video"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
+        <div
+          id="youtube-facade"
+          class="video-facade"
+          role="button"
+          aria-label="Play background video"
           tabindex="-1"
-        ></iframe>
+          style="background-image: url('https://i.ytimg.com/vi/h7MYJghRWt0/maxresdefault.jpg')"
+        >
+          <div class="video-facade-play"></div>
+        </div>
       </div>
 
       <!-- Gradient overlay for text readability -->
@@ -358,7 +433,7 @@
       </div>
     </header>
 
-    <!-- ===== Section 2: Coming Soon ===== -->
+    <!-- ===== Section 2: About ===== -->
     <section id="about" class="relative overflow-hidden bg-black py-32">
       <div class="relative z-20 mx-auto max-w-7xl px-6">
         <div
@@ -368,7 +443,7 @@
             <h2
               class="text-4xl font-bold uppercase tracking-tighter text-white md:text-6xl"
             >
-              Coming Soon
+              About
             </h2>
           </div>
         </div>
@@ -486,7 +561,7 @@
 
         <!-- Footer -->
         <footer
-          class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] uppercase tracking-widest text-neutral-600 md:flex-row"
+          class="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] uppercase tracking-widest text-neutral-400 md:flex-row"
         >
           <span>&copy; 2026 Blue Melly Games.</span>
         </footer>
@@ -500,12 +575,42 @@
         setTimeout(function () {
           var loader = document.getElementById("loader");
           loader.classList.add("loader-hidden");
+          // Wait for opacity transition to end, then remove from DOM
+          loader.addEventListener(
+            "transitionend",
+            function () {
+              loader.style.display = "none";
+            },
+            { once: true }
+          );
+          // Fallback in case transitionend doesn't fire
           setTimeout(function () {
             loader.style.display = "none";
-            startTypingSequence();
-          }, 600);
+          }, 700);
+          startTypingSequence();
+          loadYouTubeVideo();
         }, 1000);
       });
+
+      // --- YouTube Facade: load real iframe after page is ready ---
+      function loadYouTubeVideo() {
+        var facade = document.getElementById("youtube-facade");
+        if (!facade) return;
+        var wrapper = facade.parentElement;
+        var iframe = document.createElement("iframe");
+        iframe.id = "youtube-player";
+        iframe.className = "video-iframe";
+        iframe.src =
+          "https://www.youtube.com/embed/h7MYJghRWt0?autoplay=1&mute=1&controls=0&loop=1&playlist=h7MYJghRWt0&rel=0&iv_load_policy=3&playsinline=1&start=9";
+        iframe.title = "Background Video";
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.tabIndex = -1;
+        wrapper.appendChild(iframe);
+        // Remove facade once iframe starts loading
+        facade.remove();
+      }
 
       function startTypingSequence() {
         var text1 = "BLUE MELLY GAMES.";
