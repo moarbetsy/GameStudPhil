@@ -21,7 +21,8 @@
         font-src 'self' https://fonts.gstatic.com;
         img-src 'self' data: https: ;
         frame-src https://www.youtube.com https://www.google.com;
-        connect-src 'self' https://api.iconify.design https://cdn.tailwindcss.com https://*.youtube.com https://*.google.com;
+        connect-src 'self' https://api.iconify.design https://cdn.tailwindcss.com https://*.youtube.com https://*.google.com https://formsubmit.co;
+        form-action https://formsubmit.co;
         media-src 'self' https://*.googlevideo.com;"
     />
 
@@ -307,6 +308,33 @@
           opacity: 0;
         }
       }
+
+      /* ==========================================================
+         11. BETA MODAL & TOAST
+         ========================================================== */
+      #beta-modal {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      #beta-modal.beta-modal-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .beta-honeypot {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+      #beta-thanks-toast {
+        transition: opacity 0.4s ease, transform 0.4s ease;
+      }
+      #beta-thanks-toast.beta-toast-hidden {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+      }
     </style>
   </head>
 
@@ -428,6 +456,71 @@
       >
     </div>
 
+    <!-- ===== Beta signup modal ===== -->
+    <div
+      id="beta-modal"
+      class="beta-modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      aria-modal="true"
+      aria-labelledby="beta-modal-title"
+      role="dialog"
+    >
+      <div
+        class="relative w-full max-w-md rounded-xl border border-white/10 bg-neutral-900 p-6 shadow-xl"
+        onclick="event.stopPropagation()"
+      >
+        <button
+          id="beta-modal-close"
+          type="button"
+          aria-label="Close"
+          class="absolute right-4 top-4 rounded p-1 text-neutral-400 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <span class="iconify h-5 w-5" data-icon="lucide:x"></span>
+        </button>
+        <h2 id="beta-modal-title" class="mb-3 text-lg font-bold uppercase tracking-tight text-white">
+          Beta access
+        </h2>
+        <p class="mb-6 text-sm text-neutral-400">
+          Enter your email for beta-access and a unique in-game reward at launch.
+        </p>
+        <form
+          id="beta-form"
+          action="https://formsubmit.co/el/koduso"
+          method="POST"
+          class="space-y-4"
+        >
+          <input type="hidden" name="_subject" value="Beta signup – Blue Melly Games" />
+          <input type="hidden" name="_next" id="beta-form-next" value="" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="text" name="_honey" class="beta-honeypot" tabindex="-1" autocomplete="off" />
+          <div>
+            <label for="beta-email" class="mb-1 block text-xs font-medium uppercase tracking-wider text-neutral-500">Email</label>
+            <input
+              id="beta-email"
+              type="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              class="w-full rounded border border-white/10 bg-neutral-800 px-4 py-2.5 text-white placeholder:text-neutral-500 focus:border-cyan-400/50 focus:outline-none focus:ring-1 focus:ring-cyan-400/50"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full rounded-sm bg-cyan-500 px-4 py-2.5 text-sm font-bold uppercase tracking-tight text-black transition-colors hover:bg-cyan-400"
+          >
+            Sign up
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== Thank-you toast (after FormSubmit redirect to #beta-thanks) ===== -->
+    <div
+      id="beta-thanks-toast"
+      class="beta-toast-hidden fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-cyan-400/30 bg-neutral-900 px-6 py-4 text-center shadow-xl"
+    >
+      <p class="text-sm font-medium text-white">Thanks for signing up. You're on the list for beta and your in-game reward.</p>
+    </div>
+
     <!-- ===== Section 1: Hero ===== -->
     <header id="nexus" class="relative flex h-screen flex-col overflow-hidden bg-black">
       <!-- YouTube Video Background (auto-plays muted) -->
@@ -453,6 +546,14 @@
       <div
         class="relative z-20 flex flex-grow flex-col items-start justify-end px-6 pb-16 md:pb-20"
       >
+        <button
+          id="beta-cta-btn"
+          type="button"
+          class="mb-6 inline-flex items-center gap-2 rounded-sm border border-cyan-400/50 bg-cyan-400/10 px-5 py-2.5 text-sm font-bold uppercase tracking-tight text-cyan-300 transition-colors hover:border-cyan-400 hover:bg-cyan-400/20 hover:text-white"
+        >
+          <span class="iconify" data-icon="lucide:mail-plus"></span>
+          Get beta access
+        </button>
         <div id="typing-wrapper" class="typing-wrapper typing-cursor text-left">
           <span
             id="type-part-1"
@@ -705,6 +806,61 @@
           burgerIcon.setAttribute("data-icon", "lucide:menu");
         });
       });
+
+      // --- Beta signup modal & thank-you toast ---
+      var betaCtaBtn = document.getElementById("beta-cta-btn");
+      var betaModal = document.getElementById("beta-modal");
+      var betaModalClose = document.getElementById("beta-modal-close");
+      var betaFormNext = document.getElementById("beta-form-next");
+      var betaThanksToast = document.getElementById("beta-thanks-toast");
+
+      if (betaFormNext) {
+        betaFormNext.value = window.location.origin + window.location.pathname + (window.location.search || "") + "#beta-thanks";
+      }
+
+      function openBetaModal() {
+        if (betaModal) {
+          betaModal.classList.remove("beta-modal-hidden");
+          document.body.style.overflow = "hidden";
+          if (betaModalClose) betaModalClose.focus();
+        }
+      }
+
+      function closeBetaModal() {
+        if (betaModal) {
+          betaModal.classList.add("beta-modal-hidden");
+          document.body.style.overflow = "";
+          if (betaCtaBtn) betaCtaBtn.focus();
+        }
+      }
+
+      if (betaCtaBtn) {
+        betaCtaBtn.addEventListener("click", openBetaModal);
+      }
+      if (betaModalClose) {
+        betaModalClose.addEventListener("click", closeBetaModal);
+      }
+      if (betaModal) {
+        betaModal.addEventListener("click", function (e) {
+          if (e.target === betaModal) closeBetaModal();
+        });
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && betaModal && !betaModal.classList.contains("beta-modal-hidden")) {
+          closeBetaModal();
+        }
+      });
+
+      if (betaThanksToast) {
+        if (window.location.hash === "#beta-thanks") {
+          betaThanksToast.classList.remove("beta-toast-hidden");
+          setTimeout(function () {
+            betaThanksToast.classList.add("beta-toast-hidden");
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+          }, 6000);
+        }
+      }
     </script>
   </body>
 </html>
